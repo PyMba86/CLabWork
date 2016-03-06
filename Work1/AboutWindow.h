@@ -32,7 +32,7 @@ namespace Window {
                   lblName(L"Лабораторная работа \r\n Work1 ", &LabelLayout),
                   lblDescription(L"Описание: Лабораторная работа по \r\n" L"основам программиования Си", &LabelLayout),
                   lblAuthor(L"Автор: Матвейчук Артем Олегович", &LabelLayout),
-                  lblVersion(L"\r\n Версия: 1.0.0.5", &LabelLayout) {
+                  lblVersion(L"\r\n Версия: 1.0.0.6", &LabelLayout) {
             setLayout(new BoxLayout(Orientation::Horizontal, false));
             setBgColor(Color::White);
 

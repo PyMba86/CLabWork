@@ -11,12 +11,11 @@
 #define LABWORK_MAINWINDOW_H
 
 #include <vaca/vaca.h>
-#include "../resource.h"
+#include "resource.h"
 #include "AboutWindow.h"
 #include "BoxWidget.h"
 #include "HelpWindow.h"
 #include <ctime>
-
 #include "PointList.h"
 #include "Memory.h"
 
@@ -48,7 +47,7 @@ namespace Window {
 
     public:
         MainFrame()
-                : Frame(L"Work1", NULL, Frame::Styles::Default - Frame::Styles::Maximizable),
+                : Frame(L"Work1", nullptr, Frame::Styles::Default - Frame::Styles::Maximizable),
                   boxLine(L"Уравнение прямой : y=kx+b", this, L"k:", L"b:"),
                   boxLCircle(L"Параметры окружности : центр окружности", this, L"x:", L"y:"),
                   boxLFirstPoint(L"Координаты первой точки", this, L"x:", L"y:"), btnAbout(L"О программе", this),
@@ -105,7 +104,6 @@ namespace Window {
             float fRadius;
             float k;
             bool flag;
-
             // Генерация float числа
             std::mt19937 gen(time(0));
             std::uniform_real_distribution<float> uid(RANGE_MIN, RANGE_MAX);

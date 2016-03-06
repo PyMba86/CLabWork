@@ -13,19 +13,15 @@
 #include "StreamBehavior.h"
 
 namespace Point {
-    //Поток Внутренней памяти
+    //Поток Внутренней памяти // Временные заглушки
     class Memory : public StreamBehavior {
     public:
         fvPoint open() {
-            MsgBox::show(nullptr, L"Ошибка", L"Открыть список невозможно! \r\n Будет возвращен пустой список",
-                         MsgBox::Type::Ok, MsgBox::Icon::Error);
-            return fvPoint(0);
+            throw std::logic_error("View the list is not possible");
         }
 
         bool save() {
-            MsgBox::show(nullptr, L"Ошибка", L"Сохранить список невозможно!",
-                         MsgBox::Type::Ok, MsgBox::Icon::Error);
-            return false;
+            throw std::logic_error("Save list can not be!");
         }
     };
 }
