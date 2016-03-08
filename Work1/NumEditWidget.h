@@ -36,14 +36,28 @@ namespace MyWidget {
     protected:
 
         virtual void onKeyDown(KeyEvent &ev) {
-            if ((ev.getCharCode() != 0) &&
-                !(ev.getCharCode() >= '0' && ev.getCharCode() <= '9'
-                  || ev.getCharCode() == '.' || ev.getCharCode() == '-') &&
-                (ev.getCharCode() >= ' ')) {
-                ev.consume();
-            }
-            else
+            if ((ev.getCharCode() >= '0') && (ev.getCharCode() <= '9') || ev.getCharCode() == '\b') {
                 TextEdit::onKeyDown(ev);
+                return;
+            }
+            else if (ev.getCharCode() == '.') {
+
+                if ((getText().find('.') <= getText().length()) || getText().length() == 0) {
+                    ev.consume();
+                    return;
+                }
+                TextEdit::onKeyDown(ev);
+                return;
+            }
+            else if (ev.getCharCode() == '-') {
+                if (getText().length() > 0) {
+                    ev.consume();
+                    return;
+                }
+                TextEdit::onKeyDown(ev);
+                return;
+            }
+            ev.consume();
         }
 
     };
