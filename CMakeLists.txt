@@ -6,7 +6,7 @@ project(labWork)
 
 
 # Cmake :: Flags
-#TODO CMAKE_CXX_FLAGS только для MinGW
+#FIXME CMAKE_CXX_FLAGS только для MinGW
 if (MINGW)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -std=c++11 ")
 endif()
@@ -102,5 +102,8 @@ if(THEMES AND MSVC)
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 endfunction(add_work)
+
+# LabWork :: Work
 add_work(Work1)
+add_work(Work2)
 
