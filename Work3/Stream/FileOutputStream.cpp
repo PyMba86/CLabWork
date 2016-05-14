@@ -4,6 +4,7 @@ namespace lab
 {
     namespace stream
     {
+        // ---------------------------------------------------------------------
         FileOutputStream::FileOutputStream(const vaca::String &path)
         {
             open(path,Mode::Disposition::CreateAlways,Mode::Access::Write);

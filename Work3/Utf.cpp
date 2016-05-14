@@ -8,16 +8,19 @@ namespace lab
 
     namespace detail {
 
-        //  UTF-8 byte distribution:
-        //      00-7f = Single byte character
-        //      80-bf = Second or later byte of a multibyte character
-        //      c0-c1 = Not allowed
-        //      c2-df = First byte of a 2-byte character
-        //      e0-ef = First byte of a 3-byte character
-        //      f0-f4 = First byte of a 4-byte character
-        //      f5-ff = Not allowed
+        // ---------------------------------------------------------------------
+        size_t UtfEncoding<char>::decode(const types::byte_t *src, size_t n,
+                                         char32_t &dst) noexcept {
 
-        size_t UtfEncoding<char>::decode(const types::byte_t *src, size_t n, char32_t &dst) noexcept {
+            //  UTF-8 byte distribution:
+            //      00-7f = Single byte character
+            //      80-bf = Second or later byte of a multibyte character
+            //      c0-c1 = Not allowed
+            //      c2-df = First byte of a 2-byte character
+            //      e0-ef = First byte of a 3-byte character
+            //      f0-f4 = First byte of a 4-byte character
+            //      f5-ff = Not allowed
+
             dst = not_detect_character;
             auto code = reinterpret_cast<const uint8_t *>(src);
             if (code[0] <= 0x7f)
@@ -67,7 +70,9 @@ namespace lab
             }
         }
 
-        size_t UtfEncoding<char>::decode_prev(const types::byte_t *src, size_t pos, char32_t &dst) noexcept {
+        // ---------------------------------------------------------------------
+        size_t UtfEncoding<char>::decode_prev(const types::byte_t *src,
+                                              size_t pos, char32_t &dst) noexcept {
             auto code = reinterpret_cast<const uint8_t *>(src);
             size_t start = pos - 1;
             while (start > 0 && code[start] >= 0x80 && code[start] <= 0xbf)
@@ -80,6 +85,8 @@ namespace lab
             return pos - start;
         }
 
+
+        // ---------------------------------------------------------------------
         size_t UtfEncoding<char>::encode(char32_t src, types::byte_t *dst) noexcept {
             auto code = reinterpret_cast<uint8_t *>(dst);
             if (src <= 0x7f) {
@@ -106,6 +113,7 @@ namespace lab
             }
         }
 
+        // ---------------------------------------------------------------------
         size_t UtfEncoding<char16_t>::decode(const char16_t *src, size_t n,
                                              char32_t &dst) noexcept {
            if (char_is_surrogate(src[0]) || char_is_bmp(src[0])) {
@@ -124,7 +132,9 @@ namespace lab
             }
         }
 
-        size_t UtfEncoding<char16_t>::decode_prev(const char16_t *src, size_t pos, char32_t &dst) noexcept {
+        // ---------------------------------------------------------------------
+        size_t UtfEncoding<char16_t>::decode_prev(const char16_t *src, size_t pos,
+                                                  char32_t &dst) noexcept {
             if (char_is_unicode(src[pos - 1])) {
                 dst = src[pos - 1];
                 return 1;
@@ -141,6 +151,7 @@ namespace lab
             }
         }
 
+        // ---------------------------------------------------------------------
         size_t UtfEncoding<char16_t>::encode(char32_t src, char16_t *dst) noexcept {
             if (char_is_bmp(src)) {
                 dst[0] = char16_t(src);
@@ -156,12 +167,13 @@ namespace lab
 
     }
 
-    // Single character functions
+    // ---------------------------------------------------------------------
     size_t  byte_from_utf8(const types::byte_t *src, char32_t &dst) noexcept
     {
         return detail::UtfEncoding<char>::decode(src, 4, dst);
     }
 
+    // ---------------------------------------------------------------------
     size_t char_from_utf16(const char16_t *src, char32_t &dst) noexcept {
         char32_t c = 0;
         size_t n = detail::UtfEncoding<char16_t>::decode(src, 2, c);
@@ -169,7 +181,8 @@ namespace lab
         return n;
     }
 
-    size_t   char_from_wchar(const wchar_t *src, char32_t &dst) noexcept
+    // ---------------------------------------------------------------------
+    size_t char_from_wchar(const wchar_t *src, char32_t &dst) noexcept
     {
         char32_t c = 0;
         size_t n = detail::UtfEncoding<wchar_t>::decode(src, 2, c);
@@ -177,6 +190,7 @@ namespace lab
         return n;
     }
 
+    // ---------------------------------------------------------------------
     size_t char_to_utf8(char32_t src, types::byte_t *dst) noexcept {
         if (!char_is_unicode(src))
             return 0;
@@ -184,13 +198,14 @@ namespace lab
             return detail::UtfEncoding<char>::encode(src, dst);
     }
 
+    // ---------------------------------------------------------------------
     size_t char_to_utf16(char32_t src, char16_t *dst) noexcept {
         if (!char_is_unicode(src))
             return 0;
         else
             return detail::UtfEncoding<char16_t>::encode(src, dst);
     }
-
+    // ---------------------------------------------------------------------
     size_t char_to_wchar(char32_t src, wchar_t *dst) noexcept {
         if (!char_is_unicode(src))
             return 0;
@@ -198,6 +213,7 @@ namespace lab
             return detail::UtfEncoding<wchar_t>::encode(src, dst);
     }
 
+    // ---------------------------------------------------------------------
     size_t char_to_byte(char32_t src, types::byte_t *dst) noexcept{
         if (!char_is_unicode(src))
             return 0;

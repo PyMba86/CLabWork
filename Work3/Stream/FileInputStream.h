@@ -7,6 +7,7 @@
 // Программа:   Work3 | labWork
 ///////////////////////////////////////////////////////////////////////////////
 
+#pragma once
 
 #ifndef LABWORK_FILEINPUTSTREAM_H
 #define LABWORK_FILEINPUTSTREAM_H

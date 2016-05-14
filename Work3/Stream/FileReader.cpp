@@ -3,6 +3,7 @@
 namespace lab {
     namespace stream
     {
+        // ---------------------------------------------------------------------
         FileReader::FileReader(FileInputStream *inputStream, encoding::TextEncoding
         decoder, uint32_t sizeBuffer)
                 : m_nInputBufferPos(0), m_nInputBufferLength(0)

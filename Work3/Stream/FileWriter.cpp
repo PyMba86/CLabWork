@@ -2,8 +2,9 @@
 
 namespace lab
 {
-    namespace stream {
-
+    namespace stream
+    {
+        // ---------------------------------------------------------------------
         FileWriter::FileWriter(FileOutputStream* outputStream, encoding::TextEncoding
                 encoder) : m_OutputStream(outputStream)
                 {

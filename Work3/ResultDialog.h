@@ -7,6 +7,8 @@
 // Программа:   Work3 | labWork
 ///////////////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 #ifndef LABWORK_RESULTDIALOG_H
 #define LABWORK_RESULTDIALOG_H
 
@@ -25,7 +27,7 @@ namespace Window {
         TextEdit editResult;
     public:
         ResultDialog(Widget *parent, encoding::TextEncoding encoding)
-                : Dialog(L"Результат поиска", parent),
+                : Dialog(L"Результаты поиска", parent),
                   editResult(L"",this, TextEdit::Styles::TextArea + TextEdit::Styles::ReadOnly)
         {
             setLayout(new BoxLayout(Orientation::Vertical, true));

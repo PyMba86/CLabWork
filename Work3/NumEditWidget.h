@@ -1,14 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Название:    Work2/NumEditWidget.h
+// Название:    Work3/NumEditWidget.h
 // Цель:        Edit для ввода только числовых значений
 // Автор:       Артем Матвейчук
 // Создан:      05.03.2016
 // Емайл:       pymba-96@mail.ru
-// Программа:   Work2 | labWork
+// Программа:   Work3 | labWork
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef LABWORK_CELLEDIT_H
-#define LABWORK_CELLEDIT_H
+#pragma once
+
+#ifndef LABWORK_NUMEDITWIDGET_H
+#define LABWORK_NUMEDITWIDGET_H
 
 #include <vaca/vaca.h>
 
@@ -84,4 +86,4 @@ namespace MyWidget {
 
     };
 } //namespace MyWidget
-#endif //LABWORK_CELLEDIT_H
+#endif //LABWORK_NUMEDITWIDGET_H

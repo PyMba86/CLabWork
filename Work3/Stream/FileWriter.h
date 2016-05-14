@@ -7,6 +7,7 @@
 // Программа:   Work3 | labWork
 ///////////////////////////////////////////////////////////////////////////////
 
+#pragma once
 
 #ifndef LABWORK_FILEWRITER_H
 #define LABWORK_FILEWRITER_H

@@ -7,6 +7,8 @@
 // Программа:   Work3 | labWork
 ///////////////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 #ifndef LABWORK_ENCODING_H
 #define LABWORK_ENCODING_H
 
