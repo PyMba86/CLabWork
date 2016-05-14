@@ -3,7 +3,7 @@
 	<p><img src="LogoWork.bmp" align="left"><h1><span>labWork</h1></p>
 </div>  
 Лабораторная работа по основам программирования Си  
-  2016   
+  Год: 2016   
       
    
 
@@ -19,13 +19,3 @@
 
 1. Vaca (https://github.com/dacap/vaca) 
 
-## Лабораторные работы
-
-№ | Папка | Выполнена |
-:--: | :--: | :--: |
-1 |  [Work1](https://github.com/PyMba86/labWork/tree/master/Work1)| ✔ |
-2 | [Work2](https://github.com/PyMba86/labWork/tree/master/Work2) | ↻ |
-
-## Список задач
-- [ ] Сборка из под Visual Studio
-- [ ] Проверка на утечку памяти

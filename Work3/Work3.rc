@@ -1,0 +1,31 @@
+#include "resource.h"
+#include "windows.h"
+
+#ifdef RC_WITH_MANIFEST
+  APP_MANIFEST	RT_MANIFEST	"Resource.manifest"
+#endif
+
+IDI_APP	ICON "../labWork.ico"
+IDB_LOGO BITMAP "../LogoWork.bmp"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 3,0,0,1
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041904b0"
+        BEGIN
+                VALUE "CompanyName", "labWork"
+                VALUE "FileDescription", "labWork"
+                VALUE "LegalCopyright", "Artem Matveychuk"
+                VALUE "ProductName", "labWork Application"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x419, 1200
+    END
+END
+
+

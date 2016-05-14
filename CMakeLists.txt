@@ -48,12 +48,34 @@ endif()
 find_package(Vaca REQUIRED)
 include_directories(${VACA_INCLUDE_DIR})
 
+macro(subdir_list result curdir)
+    list(APPEND dirlist ${curdir})
+    file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+    foreach(child ${children})
+        if(IS_DIRECTORY ${curdir}/${child})
+            list(APPEND dirlist ${child})
+        endif()
+    endforeach()
+    set(${result} ${dirlist})
+endmacro()
+
 # Cmake :: Function to add work
 function(add_work name)
-    # Source files of the target
-        file(GLOB work_sources ${name}/*.cpp)
-    # Header files of the target
-        file(GLOB work_header ${name}/*.h)
+
+    # Cmake :: Add main directroy
+    FILE(GLOB work_sources ${name}/*.cpp)
+    FILE(GLOB work_header ${name}/*.h)
+
+    # Cmake :: Add sub directroy
+    subdir_list(subdirs ${CMAKE_CURRENT_SOURCE_DIR}/${name})
+    foreach(subdir ${subdirs})
+        # Source files of the target
+        file(GLOB work_temp_file_dir ${name}/${subdir}/*.cpp)
+        list(APPEND work_sources ${work_temp_file_dir})
+        # Header files of the target
+        file(GLOB work_temp_file_dir ${name}/${subdir}/*.h)
+        list(APPEND work_header ${work_temp_file_dir})
+    endforeach()
 
     # Resource file to be used
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}.rc)
@@ -106,4 +128,5 @@ endfunction(add_work)
 # LabWork :: Work
 add_work(Work1)
 add_work(Work2)
+add_work(Work3)
 
