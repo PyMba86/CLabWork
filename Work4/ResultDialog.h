@@ -27,7 +27,7 @@ namespace Window {
         TextEdit editResult;
     public:
         ResultDialog(Widget *parent, encoding::TextEncoding encoding)
-                : Dialog(L"Результаты поиска", parent),
+                : Dialog(L"Результат", parent),
                   editResult(L"",this, TextEdit::Styles::TextArea + TextEdit::Styles::ReadOnly)
         {
             setLayout(new BoxLayout(Orientation::Vertical, true));

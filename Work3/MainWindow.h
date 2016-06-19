@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Название:    Work3/main.cpp
-// Цель:        Вызов WinMain
+// Название:    Work3/MainWindow.h
+// Цель:        Главное окно приложения "Work3"
 // Автор:       Артем Матвейчук
 // Создан:      13.05.2016
 // Емайл:       pymba-96@mail.ru
@@ -90,7 +90,8 @@ namespace Window {
         }
 
     private:
-
+	
+		// ---------------------------------------------------------------------
         void onComboChange(Event& ev)
         {
             switch (cbEncoding.getSelectedItem()) {
@@ -107,13 +108,15 @@ namespace Window {
                 }
             }
         }
-
+		
+		// ---------------------------------------------------------------------
         bool createFile(const String& path)
         {
             stream::FileOutputStream file(path);
             return file.isOpen();
         }
-
+		
+		// ---------------------------------------------------------------------
         bool checkFindFile(const String path)
         {
             FindFiles file(path);
@@ -128,12 +131,15 @@ namespace Window {
                    return true;
             return false;
         }
-
+		
+		// ---------------------------------------------------------------------
         bool search() {
             if (checkFindFile(finFilePath)) {
+				// Открытие файла fin.txt
                 std::unique_ptr<stream::FileInputStream> finFile(new stream::FileInputStream(finFilePath));
                 if (finFile->isOpen()) {
                     stream::FileReader finReader(finFile.get());
+					//Проверка файла выбранной кодировке.
                     finReader.checkEncoding();
                     if (finReader.getDecoder()->getEncoding() != encoding) {
                         MsgBox::Result temp = MsgBox::show(this, finFilePath,
@@ -143,9 +149,10 @@ namespace Window {
                         if (temp == MsgBox::Result::Yes)
                             finReader.setDecoder(encoding::BaseDecoder::getDecoder(encoding));
                     }
+					// Открытие файла fout.txt
                     std::unique_ptr<stream::FileOutputStream> foutFile(new stream::FileOutputStream(foutFilePath));
                     stream::FileWriter foutWriter(foutFile.get(), encoding);
-
+					
                     while (!finReader.isEndOfFile()) {
                         String my_string = finReader.readLine(delim);
                         foutWriter.writeString(searchWord(my_string) + to_String(delim));
@@ -155,7 +162,8 @@ namespace Window {
             }
             return false;
         }
-
+		
+		// ---------------------------------------------------------------------
         void btnSearchClick(Event &ev) {
             if (search()) {
                 ResultDialog dlg(this,encoding);
@@ -166,7 +174,8 @@ namespace Window {
                              L"Что-то пошло не так... Операция отменена!",
                              MsgBox::Type::Ok, MsgBox::Icon::Error);
         };
-
+		
+		// ---------------------------------------------------------------------
         String searchWord(String &str)
         {
             String::size_type resultPos = 0, nResultChar = 0;
@@ -205,7 +214,8 @@ namespace Window {
             }
             return str.substr(resultPos, nResultChar);
             }
-
+			
+		// ---------------------------------------------------------------------
         void btnAboutClick(Event &ev) {
             AboutDialog dlg(this);
             dlg.doModal();

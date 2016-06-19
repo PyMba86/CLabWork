@@ -32,10 +32,10 @@ namespace Window {
     public:
         AboutDialog(Widget *parent)
                 : Dialog(L"О программе labWork", parent), LogoImage(this), LabelLayout(this),
-                  lblName(L"Лабораторная работа \r\n Work3", &LabelLayout),
+                  lblName(L"Лабораторная работа \r\n Work5", &LabelLayout),
                   lblDescription(L"Описание: Лабораторная работа по \r\n" L"основам программиования Си", &LabelLayout),
                   lblAuthor(L"Автор: Матвейчук Артем Олегович", &LabelLayout),
-                  lblVersion(L"\r\n Версия: 3.0.0.1", &LabelLayout) {
+                  lblVersion(L"\r\n Версия: 5.0.0.1", &LabelLayout) {
             setLayout(new BoxLayout(Orientation::Horizontal, false));
             setBgColor(Color::White);
 

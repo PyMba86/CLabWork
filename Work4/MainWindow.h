@@ -19,8 +19,6 @@
 #include "resource.h"
 #include "AboutDialog.h"
 #include "ResultDialog.h"
-#include "NumEditWidget.h"
-
 
 #include "Stream/FileReader.h"
 #include "Stream/FileWriter.h"
@@ -36,21 +34,17 @@ namespace Window {
         ComboBox cbEncoding;
         encoding::TextEncoding encoding;
         Label lblChar;
-        Label lblNumChar;
-        MyWidget::NumEditWidget numChar;
         TextEdit editChar;
         Button btnSearch;
         Button btnAbout;
     public:
         Main()
-                : Frame(L"Work3", nullptr),
+                : Frame(L"Work4", nullptr),
                   searchBox(L"Поиск",this),
                   encodingBox(L"Кодировка",this),
                   cbEncoding(&encodingBox),
                   lblChar(L"Символ:", &searchBox),
                   editChar(L"",&searchBox),
-                  lblNumChar(L"Число символов:",&searchBox),
-                  numChar(&searchBox),
                   btnSearch(L"Поиск",this),
                   btnAbout(L"О программе", this),
                   encoding(encoding::TextEncoding::Ansi)
@@ -63,7 +57,7 @@ namespace Window {
             cbEncoding.addItem(L"UTF8");
             cbEncoding.setSelectedItem(0);
 
-            searchBox.setLayout(Bix::parse(L"Y[X[%,f%],X[%,f%]]", &lblChar,&editChar,&lblNumChar,&numChar));
+            searchBox.setLayout(Bix::parse(L"Y[X[%,f%]]", &lblChar,&editChar));
             encodingBox.setLayout(Bix::parse(L"Y[X[f%]]", &cbEncoding));
             setLayout(Bix::parse(L"Y[f%,f%,x%,x%]", &searchBox,&encodingBox,&btnSearch,&btnAbout));
 
@@ -77,7 +71,7 @@ namespace Window {
         }
     protected:
 
-        virtual void onResizing(CardinalDirection dir, Rect &rc) {
+        void onResizing(CardinalDirection dir, Rect &rc) override {
             rc.y = getBounds().y;
 
             if (dir != CardinalDirection::North &&
@@ -154,8 +148,12 @@ namespace Window {
                     stream::FileWriter foutWriter(foutFile.get(), encoding);
 					
                     while (!finReader.isEndOfFile()) {
-                        String my_string = finReader.readLine(delim);
-                        foutWriter.writeString(searchWord(my_string) + to_String(delim));
+                        String lineString = finReader.readLine(delim);
+                        foutWriter.writeString(editChar.getText()
+                                               + L" "
+                                               + convert_to<String>(searchWordCount(lineString, editChar.getText()))
+                                               + L" " + convert_to<String>(lineString.length())
+                                               + to_String(delim));
                     }
                 }
                 return true;
@@ -176,43 +174,22 @@ namespace Window {
         };
 		
 		// ---------------------------------------------------------------------
-        String searchWord(String &str)
+        uint32_t searchWordCount(const String &string, const String& word)
         {
-            String::size_type resultPos = 0, nResultChar = 0;
-            if (!str.empty()) {
-                nResultChar = str.length();
-                wchar_t c = editChar.getText()[0];
-                uint32_t numC = convert_to<uint32_t>(numChar.getText());
-                String::size_type last_pos = 0, endpos, pos;
-                String maskWord = {L' ', c};
+            String::size_type last_pos = 0,
+                    pos = string.find(word, last_pos);
+            uint32_t countWord = 0;
 
-                // Если символ находится в начале
-                if (str[last_pos] == c) {
-                    pos = 0;
-                }
-                else {
-                    pos = str.find(maskWord, last_pos);
-                }
-
-                while (pos != String::npos) {
-                    endpos = str.find(L' ', pos + 1);
-                    String::size_type receve = endpos - pos;
-                    --(pos ? receve : pos);
-                    if (receve >= numC && nResultChar > receve) {
-                        resultPos = pos + 1;
-                        nResultChar = receve;
-                        if (receve == numC)
-                            break;
-                    }
-                    last_pos = endpos - 1;
-                    if (last_pos == String::npos || (last_pos + 1) == str.length())
-                        break;
-                    pos = str.find(maskWord, ++last_pos);
-                }
-                if (nResultChar == str.length())
-                    nResultChar = 0;
+            while (last_pos != String::npos) {
+                if (pos != String::npos)   /* 1 */
+                    ++countWord;
+                last_pos = pos;
+                if (last_pos == String::npos
+                    || (last_pos + 1) == string.length())
+                    break;
+                pos = string.find(word, ++last_pos);
             }
-            return str.substr(resultPos, nResultChar);
+            return countWord;
             }
 			
 		// ---------------------------------------------------------------------

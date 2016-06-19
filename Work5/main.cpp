@@ -14,7 +14,7 @@
 using namespace vaca;
 
 // Класс для создании окна MainFrame
-class Work3 : public Application {
+class Work5 : public Application {
 public:
     void main() override {
         m_mainFrame.setVisible(true);
@@ -27,7 +27,7 @@ protected:
 // Вызов WinMain через макрос VACA_MAIN
 int VACA_MAIN() {
     try {
-        Work3 app;
+        Work5 app;
         app.run();
     }
     catch (Exception &e) {

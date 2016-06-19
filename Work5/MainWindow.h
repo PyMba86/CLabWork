@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Название:    Work3/main.cpp
-// Цель:        Вызов WinMain
+// Название:    Work3/MainWindow.h
+// Цель:        Главное окно приложения "Work5"
 // Автор:       Артем Матвейчук
 // Создан:      13.05.2016
 // Емайл:       pymba-96@mail.ru
@@ -18,79 +18,80 @@
 
 #include "resource.h"
 #include "AboutDialog.h"
-#include "ResultDialog.h"
-#include "NumEditWidget.h"
-
 
 #include "Stream/FileReader.h"
-#include "Stream/FileWriter.h"
+#include "List.h"
+#include "EditableList.hpp"
 
 using namespace vaca;
 using namespace lab;
 
 namespace Window {
 
+    struct Man
+    {
+        String name; // Имя
+        String surname; // Фамилия
+        String patronymic; // Отчество
+        String number; // Номер телефона
+    };
+
     class Main : public Frame {
+        Widget leftPanel;
+        Widget rightPanel;
         GroupBox searchBox;
-        GroupBox encodingBox;
+        Label lblDelim;
+        TextEdit editDelim;
+        Label lblEncoding;
         ComboBox cbEncoding;
         encoding::TextEncoding encoding;
-        Label lblChar;
-        Label lblNumChar;
-        MyWidget::NumEditWidget numChar;
-        TextEdit editChar;
-        Button btnSearch;
+        Label lblResult;
+        MyWidget::EditableListBox listResult;
+        Button btnResult;
         Button btnAbout;
     public:
         Main()
-                : Frame(L"Work3", nullptr),
-                  searchBox(L"Поиск",this),
-                  encodingBox(L"Кодировка",this),
-                  cbEncoding(&encodingBox),
-                  lblChar(L"Символ:", &searchBox),
-                  editChar(L"",&searchBox),
-                  lblNumChar(L"Число символов:",&searchBox),
-                  numChar(&searchBox),
-                  btnSearch(L"Поиск",this),
-                  btnAbout(L"О программе", this),
+                : Frame(L"Work5", nullptr),
+                  leftPanel(this),
+                  rightPanel(this),
+                  searchBox(L"Настройки",&rightPanel),
+                  lblDelim(L"Делитель:",&searchBox),
+                  editDelim(L"",&searchBox),
+                  lblEncoding(L"Кодировка:", &searchBox),
+                  cbEncoding(&searchBox),
+                  lblResult(L"Результат:", &leftPanel),
+                  listResult(&leftPanel),
+                  btnResult(L"Составить список",&rightPanel),
+                  btnAbout(L"О программе", &rightPanel),
                   encoding(encoding::TextEncoding::Ansi)
 
         {
             setIcon(ResourceId(IDI_APP));
-            editChar.setTextLimit(1);
 
             cbEncoding.addItem(L"ANSI");
             cbEncoding.addItem(L"UTF8");
             cbEncoding.setSelectedItem(0);
+            searchBox.setLayout(new BoxLayout(Orientation::Vertical, false));
+            leftPanel.setLayout(Bix::parse(L"Y[%,f%]", &lblResult, &listResult));
+            rightPanel.setLayout(Bix::parse(L"Y[f%,%,%]", &searchBox, &btnResult,&btnAbout));
 
-            searchBox.setLayout(Bix::parse(L"Y[X[%,f%],X[%,f%]]", &lblChar,&editChar,&lblNumChar,&numChar));
-            encodingBox.setLayout(Bix::parse(L"Y[X[f%]]", &cbEncoding));
-            setLayout(Bix::parse(L"Y[f%,f%,x%,x%]", &searchBox,&encodingBox,&btnSearch,&btnAbout));
+            setLayout(Bix::parse(L"X[f%,%]", &leftPanel, &rightPanel));
+
+            //Размеры панели
+            leftPanel.setPreferredSize(leftPanel.getPreferredSize() * 3);
+            rightPanel.setPreferredSize(rightPanel.getPreferredSize() * 2);
 
             //Привязка сигналов
             btnAbout.Click.connect(&Main::btnAboutClick, this);
-            btnSearch.Click.connect(&Main::btnSearchClick, this);
+            btnResult.Click.connect(&Main::btnResultClick, this);
             cbEncoding.SelChange.connect(&Main::onComboChange, this);
 
             setSize(Size(getPreferredSize().w * 2, getPreferredSize().h));
             center();
         }
-    protected:
-
-        virtual void onResizing(CardinalDirection dir, Rect &rc) {
-            rc.y = getBounds().y;
-
-            if (dir != CardinalDirection::North &&
-                dir != CardinalDirection::South) {
-                rc.h = getPreferredSize(Size(rc.getSize().w, 0)).h;
-            }
-            else {
-                rc.h = getBounds().h;
-            }
-        }
-
     private:
 
+        // ------------------------------------------------------------------
         void onComboChange(Event& ev)
         {
             switch (cbEncoding.getSelectedItem()) {
@@ -108,29 +109,20 @@ namespace Window {
             }
         }
 
-        bool createFile(const String& path)
-        {
-            stream::FileOutputStream file(path);
-            return file.isOpen();
-        }
-
-        bool checkFindFile(const String path)
+        // ------------------------------------------------------------------
+        bool checkFindFile(const String& path)
         {
             FindFiles file(path);
             if (file.next() && file.isFile())
                 return true;
-            MsgBox::Result temp = MsgBox::show(this, L"labWork",
-                         L"Файл " + path + L" не найден!\n"
-                         L"Создать новый файл в текущей директории?",
-                         MsgBox::Type::YesNo,MsgBox::Icon::Information);
-            if(temp == MsgBox::Result::Yes)
-               if (createFile(path))
-                   return true;
+            MsgBox::show(this, L"labWork", L"Файл " + path + L" не найден!");
             return false;
         }
 
-        bool search() {
+        // ------------------------------------------------------------------
+        void btnResultClick(Event &ev) {
             if (checkFindFile(finFilePath)) {
+                // Открытие файла
                 std::unique_ptr<stream::FileInputStream> finFile(new stream::FileInputStream(finFilePath));
                 if (finFile->isOpen()) {
                     stream::FileReader finReader(finFile.get());
@@ -143,23 +135,17 @@ namespace Window {
                         if (temp == MsgBox::Result::Yes)
                             finReader.setDecoder(encoding::BaseDecoder::getDecoder(encoding));
                     }
-                    std::unique_ptr<stream::FileOutputStream> foutFile(new stream::FileOutputStream(foutFilePath));
-                    stream::FileWriter foutWriter(foutFile.get(), encoding);
-
+                    // Создание двухсвязного списка
+                    List<Man> manList;
                     while (!finReader.isEndOfFile()) {
-                        String my_string = finReader.readLine(delim);
-                        foutWriter.writeString(searchWord(my_string) + to_String(delim));
+                        String lineString = finReader.readLine(delim);
+                        std::vector<String> tokens = tokenize(lineString, editDelim.getText());
+                        manList.push_back(createMan(tokens));
                     }
+                    // Вывод двухсвязного списка на экран
+                    if (!manList.empty())
+                        manView(manList);
                 }
-                return true;
-            }
-            return false;
-        }
-
-        void btnSearchClick(Event &ev) {
-            if (search()) {
-                ResultDialog dlg(this,encoding);
-                dlg.doModal();
             }
             else
                 MsgBox::show(this, L"labWork",
@@ -167,45 +153,54 @@ namespace Window {
                              MsgBox::Type::Ok, MsgBox::Icon::Error);
         };
 
-        String searchWord(String &str)
+        // ------------------------------------------------------------------
+        void manView(const List<Man>& list)
         {
-            String::size_type resultPos = 0, nResultChar = 0;
-            if (!str.empty()) {
-                nResultChar = str.length();
-                wchar_t c = editChar.getText()[0];
-                uint32_t numC = convert_to<uint32_t>(numChar.getText());
-                String::size_type last_pos = 0, endpos, pos;
-                String maskWord = {L' ', c};
+            for (auto& it : list)
+                listResult.addItem(L"Имя: "+ it.name + L" "
+                        L"Фамилия: "+ it.surname + L" "
+                                           L"Отчество: "+ it.patronymic + L" "
+                                                         L"Номер телефона: "+ it.number);
+        }
 
-                // Если символ находится в начале
-                if (str[last_pos] == c) {
-                    pos = 0;
-                }
-                else {
-                    pos = str.find(maskWord, last_pos);
-                }
+        // ------------------------------------------------------------------
+        Man createMan(std::vector<String>& vector)
+        {
+            if (vector.size() < 4)
+                vector.resize(4);
+            return {vector[0],vector[1],vector[2],vector[3]};
+        }
 
-                while (pos != String::npos) {
-                    endpos = str.find(L' ', pos + 1);
-                    String::size_type receve = endpos - pos;
-                    --(pos ? receve : pos);
-                    if (receve >= numC && nResultChar > receve) {
-                        resultPos = pos + 1;
-                        nResultChar = receve;
-                        if (receve == numC)
-                            break;
-                    }
-                    last_pos = endpos - 1;
-                    if (last_pos == String::npos || (last_pos + 1) == str.length())
-                        break;
-                    pos = str.find(maskWord, ++last_pos);
-                }
-                if (nResultChar == str.length())
-                    nResultChar = 0;
+        // ------------------------------------------------------------------
+        std::vector<String> tokenize(
+                const String& string, const String& delim)
+        {
+            // Добавляет в массив выделенные части
+            //
+            // 1. Если найден delim
+            //
+            // 2.1 Если не найден delim
+            //
+            // 2.2 Если найден delim,то проверяем с максимальной длиной строки
+
+            String::size_type last_pos = 0,
+                    pos = string.find(delim, last_pos);
+
+            std::vector<String> tokens;
+
+            while (last_pos != String::npos) {
+                if (pos != last_pos)   /* 1 */
+                    tokens.push_back(string.substr(last_pos, pos - last_pos));
+                last_pos = pos;
+                if (last_pos == String::npos		  /* 2.1 */
+                    || (last_pos + 1) == string.length())   /* 2.2 */
+                    break;
+                pos = string.find(delim, ++last_pos);
             }
-            return str.substr(resultPos, nResultChar);
-            }
+            return tokens;
+        }
 
+        // ------------------------------------------------------------------
         void btnAboutClick(Event &ev) {
             AboutDialog dlg(this);
             dlg.doModal();

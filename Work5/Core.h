@@ -20,7 +20,6 @@
 namespace lab
 {
     constexpr auto finFilePath = L"fin.txt";
-    constexpr auto foutFilePath = L"fout.txt";
     const std::u32string delim = U"\r\n";
     // ==========================================================================
     // BASIC TYPES

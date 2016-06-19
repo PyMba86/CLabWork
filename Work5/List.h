@@ -1,9 +1,15 @@
-//
-// Created by pymba86 on 21.05.16.
-//
+///////////////////////////////////////////////////////////////////////////////
+// Название:    Work3/List.hpp
+// Цель:        Вызов WinMain
+// Автор:       Артем Матвейчук
+// Создан:      21.05.2016
+// Емайл:       pymba-96@mail.ru
+// Программа:   Work3 | labWork
+///////////////////////////////////////////////////////////////////////////////
 
-#ifndef LABWORK_LIST_HPP
-#define LABWORK_LIST_HPP
+
+#ifndef LABWORK_LIST_H
+#define LABWORK_LIST_H
 
 #include <initializer_list>
 
@@ -744,6 +750,6 @@ namespace lab {
 	}
 
 
-} //namespace
+} //namespace lab
 
-#endif //LABLIST_LIST_HPP
+#endif //LABWORK_LIST_H
