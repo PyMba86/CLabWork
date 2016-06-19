@@ -1,0 +1,8 @@
+//
+// Created by PyMba86 on 25.05.2016.
+//
+
+#ifndef LABWORK_EDITABLELIST_HPP
+#define LABWORK_EDITABLELIST_HPP
+
+#endif //LABWORK_EDITABLELIST_HPP
