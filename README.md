@@ -1,6 +1,6 @@
 
 <div>
-	<p><img src="LogoWork.bmp" align="left"><h1><span>labWork</h1></p>
+	<p><img src="LogoWork.bmp" align="left"><h1><span>CLabWork</h1></p>
 </div>  
 Лабораторная работа по основам программирования Си  
   Год: 2016   
